@@ -38,7 +38,7 @@ def performScalarOperation(img, op='+', scalar=1):
 #given an image object and a scale, resize and display the resized image
 def resizeImage(img, scale):
     win_name = "resized image to " + str(scale) + "x"
-
+    # according to openCV docs, specific interpolations work better for shrinking and enlarging
     if scale >= 1:
         inter = cv2.INTER_CUBIC
     else:
@@ -58,9 +58,9 @@ def main():
     added = performScalarOperation(img, '+', 50)
     subtracted = performScalarOperation(img[:], '-', 125)
     multiplied = performScalarOperation(img[:], '*', 5)
-
+    divided = performScalarOperation(img,'/',2)
     #resize the image
-    resizeImage(img, 1.8)
+    resizeImage(img, 0.5)
 
 
 if __name__ == '__main__':
