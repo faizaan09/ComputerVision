@@ -11,15 +11,6 @@ def displayImage(img, win_name):
 
 
 
-
-
-
-
-
-
-
-
-
 def main():
 	img_path = './HW1-Filters/input1.jpg'
 	img = cv2.imread(img_path)
@@ -32,21 +23,14 @@ def main():
 		hist[col] = cv2.calcHist([chnls[i]],[0],None,[256],[0,256])
 		cdf[i] = np.cumsum(hist[col])
 		cdf[i] = cdf[i]/(img.shape[0]*img.shape[1])*255
+		chnls[i] = cdf[i][chnls[i]].astype('uint8')
 
-		# plt.plot(hist[col],color = col)
-
-	############ WE ARE NOT SUPPOSED TO USE FOR LOOPS, TRY ANOTHER WAY LATER ON ####################
-	b,g,r = cv2.split(img)
-	b = np.array([cdf[0][i] for i in b ])
-	g = np.array([cdf[1][i] for i in g ])
-	r = np.array([cdf[2][i] for i in r ])
-
-	img_out = cv2.merge((b,g,r))
-			
-	n_b,a,e = cv2.split(img_out)
-	equ = cv2.equalizeHist(chnls[0])
-	res = np.hstack((n_b,equ))
-	displayImage(res,'merge')
+	img_out = cv2.merge(chnls)
+	displayImage(img_out,'out')
+	# n_b,a,e = cv2.split(img_out)
+	# equ = cv2.equalizeHist(chnls[2])
+	# res = np.hstack((e,equ))
+	# displayImage(res,'merge')
 
 
 if __name__ == '__main__':
