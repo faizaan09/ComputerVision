@@ -236,20 +236,23 @@ def Perspective_warping(img1, img2, img3):
 def Bonus_perspective_warping(img1, img2, img3):
 
     # Write your codes here
-    # img1 = cv2.copyMakeBorder(img1, 200, 200, 500, 500, cv2.BORDER_CONSTANT)
+    img1 = cv2.copyMakeBorder(img1, 200, 200, 500, 500, cv2.BORDER_CONSTANT)
     (M, pts1, pts2, mask) = getTransform(img2, img1, method='homography')
     # then transform im1 with the 3x3 transformation matrix
+    out = cv2.warpPerspective(img2, M, (img1.shape[1], img1.shape[0]))
+    # dst=img1.copy(),
+    # borderMode=cv2.BORDER_TRANSPARENT)
+
     out = Laplacian_Pyramid_Blending_with_mask(img1, img2, mask)
     img1 = out
     (M, pts1, pts2, mask) = getTransform(img3, img1, method='homography')
     # then transform im1 with the 3x3 transformation matrix
+    # out = Laplacian_Pyramid_Blending_with_mask(img1, img3, mask)
+    out = cv2.warpPerspective(img3, M, (img1.shape[1], img1.shape[0]))
+    # dst=img1.copy(),
+    # borderMode=cv2.BORDER_TRANSPARENT)
+    mask = np.zeros_like(img1, dtype='float32')
     out = Laplacian_Pyramid_Blending_with_mask(img1, img3, mask)
-    # out = cv2.warpPerspective(
-    #     img3,
-    #     M, (img1.shape[1], img1.shape[0]),
-    #     dst=img1.copy(),
-    #     borderMode=cv2.BORDER_TRANSPARENT)
-
     plt.imshow(out, cmap='gray')
     plt.show()
     output_image = out  # This is dummy output, change it to your output
@@ -273,19 +276,16 @@ def Cylindrical_warping(img1, img2, img3):
     # Write your codes here
     # img1 = cv2.copyMakeBorder(img1, 50, 50, 300, 300, cv2.BORDER_CONSTANT)
     h, w = img1.shape
-    f = 400
+    f = 410
     K = np.array([[f, 0, w / 2], [0, f, h / 2], [0, 0,
                                                  1]])  # mock calibration matrix
     img1, mask1 = cylindricalWarpImage(img1, K)
-    img1 = ma.masked_array(img1, mask=mask1 / 255)
     img1 = cv2.copyMakeBorder(img1, 50, 50, 300, 300, cv2.BORDER_CONSTANT)
     h, w = img3.shape
-    f = 400
     K = np.array([[f, 0, w / 2], [0, f, h / 2], [0, 0,
                                                  1]])  # mock calibration matrix
 
     img3, mask3 = cylindricalWarpImage(img3, K)
-    img3 = ma.masked_array(img3, mask=mask3 / 255)
 
     (M, pts1, pts2, mask) = getTransform(img3,
                                          img1)  #perform the transformation
@@ -342,6 +342,21 @@ def Cylindrical_warping(img1, img2, img3):
 def Bonus_cylindrical_warping(img1, img2, img3):
 
     # Write your codes here
+    h, w = img1.shape
+    f = 410
+    K = np.array([[f, 0, w / 2], [0, f, h / 2], [0, 0,
+                                                 1]])  # mock calibration matrix
+    img1, mask1 = cylindricalWarpImage(img1, K)
+    # img1 = cv2.copyMakeBorder(img1, 50, 50, 300, 300, cv2.BORDER_CONSTANT)
+    h, w = img3.shape
+    K = np.array([[f, 0, w / 2], [0, f, h / 2], [0, 0,
+                                                 1]])  # mock calibration matrix
+
+    img3, mask3 = cylindricalWarpImage(img3, K)
+
+    (M, pts1, pts2, mask) = getTransform(img3,
+                                         img1)  #perform the transformation
+    out = Laplacian_Pyramid_Blending_with_mask(img1, img3, mask3)
     output_image = img1  # This is dummy output, change it to your output
 
     # Write out the result
@@ -356,32 +371,6 @@ This exact function will be used to evaluate your results for HW2
 Compare your result with master image and get the difference, the grading
 criteria is posted on Piazza
 '''
-
-# def RMSD(target, master):
-#     # Get width, height, and number of channels of the master image
-#     master_height, master_width = master.shape[:2]
-#     master_channel = len(master.shape)
-
-#     # Get width, height, and number of channels of the target image
-#     target_height, target_width = target.shape[:2]
-#     target_channel = len(target.shape)
-
-#     # Validate the height, width and channels of the input image
-#     if (master_height != target_height or master_width != target_width or
-#             master_channel != target_channel):
-#         return -1
-#     else:
-#         total_diff = 0.0
-#         master_channels = cv2.split(master)
-#         target_channels = cv2.split(target)
-
-#         for i in range(0, len(master_channels), 1):
-#             dst = cv2.absdiff(master_channels[i], target_channels[i])
-#             dst = cv2.pow(dst, 2)
-#             mean = cv2.mean(dst)
-#             total_diff = total_diff + mean[0]**(1 / 2.0)
-
-#         return total_diff
 
 
 def RMSD(questionID, target, master):

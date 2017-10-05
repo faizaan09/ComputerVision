@@ -30,11 +30,17 @@ def Laplacian_Pyramid_Blending_with_mask(A, B, m, num_levels=6):
     for i in xrange(num_levels - 1, 0, -1):
         # Laplacian: subtarct upscaled version of lower level from current level
         # to get the high frequencies
-        LA = np.subtract(gpA[i - 1], cv2.pyrUp(
-            gpA[i], dstsize=gpA[i - 1].shape))
+        LA = np.subtract(gpA[i - 1],
+                         cv2.pyrUp(
+                             gpA[i],
+                             dstsize=(gpA[i - 1].shape[1],
+                                      gpA[i - 1].shape[0])))
 
-        LB = np.subtract(gpB[i - 1], cv2.pyrUp(
-            gpB[i], dstsize=gpA[i - 1].shape))
+        LB = np.subtract(gpB[i - 1],
+                         cv2.pyrUp(
+                             gpB[i],
+                             dstsize=(gpB[i - 1].shape[1],
+                                      gpB[i - 1].shape[0])))
         lpA.append(LA)
         lpB.append(LB)
         gpMr.append(gpM[i - 1])  # also reverse the masks
@@ -48,8 +54,8 @@ def Laplacian_Pyramid_Blending_with_mask(A, B, m, num_levels=6):
     # now reconstruct
     ls_ = LS[0]
     for i in xrange(1, num_levels):
-        ls_ = cv2.pyrUp(ls_)
-        ls_ = cv2.add(ls_, LS[i])
+        ls_ = cv2.resize(cv2.pyrUp(ls_), dsize=(LS[i].shape[1], LS[i].shape[0]))
+        ls_ = cv2.add(ls_, LS[i].astype('float32'))
 
     return ls_
 
