@@ -169,5 +169,7 @@ if __name__ == '__main__':
 
     segmask = pixels_for_segment_selection(superpixels, np.nonzero(graph_cut))
     segmask = np.uint8(segmask * 255)
+    # cv2.imshow('img', segmask)
+    # cv2.waitKey()
     output_name = sys.argv[3] + "mask.png"
     cv2.imwrite(output_name, segmask)
