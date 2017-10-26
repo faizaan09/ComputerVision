@@ -7,6 +7,10 @@ from skimage.data import astronaut
 from skimage.util import img_as_float
 import maxflow
 from scipy.spatial import Delaunay
+import sys
+
+# import pdb
+# pdb.set_trace()
 
 
 def help_message():
@@ -24,7 +28,7 @@ def help_message():
 # Calculate the SLIC superpixels, their histograms and neighbors
 def superpixels_histograms_neighbors(img):
     # SLIC
-    segments = slic(img, n_segments=500, compactness=20)
+    segments = slic(img, n_segments=500, compactness=18.52)
     segments_ids = np.unique(segments)
 
     # centers
@@ -143,8 +147,8 @@ if __name__ == '__main__':
         help_message()
         sys.exit()
 
-    img = cv2.imread(sys.argv[1], cv2.imread_color)
-    img_marking = cv2.imread(sys.argv[2], cv2.imread_color)
+    img = cv2.imread(sys.argv[1], cv2.IMREAD_COLOR)
+    img_marking = cv2.imread(sys.argv[2], cv2.IMREAD_COLOR)
 
     centers, color_hists, superpixels, neighbors = superpixels_histograms_neighbors(
         img)
@@ -155,19 +159,18 @@ if __name__ == '__main__':
     fg_cumulative_hist = cumulative_histogram_for_superpixels(
         fg_segments, color_hists)
 
+    bg_cumulative_hist = cumulative_histogram_for_superpixels(
+        bg_segments, color_hists)
+
     norm_hists = normalize_histograms(color_hists)
 
-    graph_cut = do_graph_cut(fgbg_hists, fgbg_superpixels, norm_hists,
-                             neighbors)
+    graph_cut = do_graph_cut((fg_cumulative_hist, bg_cumulative_hist),
+                             (fg_segments, bg_segments), norm_hists, neighbors)
 
-    # ======================================== #
-    # write all your codes here
-
-    mask = cv2.cvtcolor(img_marking, cv2.color_bgr2gray
-                       )  # dummy assignment for mask, change it to your result
-
-    # ======================================== #
-
-    # read video file
+    segments = np.concatenate((fg_segments, bg_segments), axis=0)
+    segmask = pixels_for_segment_selection(superpixels, np.nonzero(graph_cut))
+    segmask = np.uint8(segmask * 255)
+    # cv2.imshow('img', segmask)
+    # cv2.waitKey()
     output_name = sys.argv[3] + "mask.png"
-    cv2.imwrite(output_name, mask)
+    cv2.imwrite(output_name, segmask)
