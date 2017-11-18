@@ -30,7 +30,7 @@ def detect_one_face(im):
     if len(faces) == 0:
         return (0, 0, 0, 0)
     return faces[0]
-
+    
 
 def hsv_histogram_for_window(frame, window):
     # set up the ROI for tracking
