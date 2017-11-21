@@ -98,7 +98,7 @@ def reconstruct_from_binary_patterns():
 
     a, b = np.unique(correspondence, return_counts=True)
     correspondence = correspondence * 255
-    cv2.imwrite('../Results/correspondence.jpg',
+    cv2.imwrite(sys.argv[1] + 'correspondence.jpg',
                 correspondence.astype(np.uint8))
 
     # now that we have 2D-2D correspondances, we can triangulate 3D points!
