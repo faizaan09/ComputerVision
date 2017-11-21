@@ -104,10 +104,6 @@ def reconstruct_from_binary_patterns():
     # now that we have 2D-2D correspondances, we can triangulate 3D points!
 
     # load the prepared stereo calibration between projector and camera
-    with open("camera_points.pkl", 'wb') as file:
-        pickle.dump(camera_points, file)
-    with open("projector_points.pkl", 'wb') as file:
-        pickle.dump(projector_points, file)
 
     with open("stereo_calibration.pckl", "r") as f:
         d = pickle.load(f)
