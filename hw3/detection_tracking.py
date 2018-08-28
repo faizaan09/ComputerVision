@@ -89,7 +89,7 @@ def particle_tracker(v, file_name):
     # calculate the HSV histogram in the window
     # NOTE: you do not need this in the Kalman, Particle or OF trackers
     roi_hist = hsv_histogram_for_window(frame, (c, r, w,
-                                                h))  # this is provided for you
+                                                h))
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     hist_bp = cv2.calcBackProject([hsv], [0], roi_hist, [0, 180], 1)
 
@@ -115,7 +115,7 @@ def particle_tracker(v, file_name):
 
         c, r, w, h = detect_one_face(frame)
 
-        # Particle motion model: uniform step (TODO: find a better motion model)
+        # Particle motion model: uniform step
         np.add(
             particles,
             np.random.uniform(-stepsize, stepsize, particles.shape),
@@ -131,7 +131,7 @@ def particle_tracker(v, file_name):
         if any([c, r, w, h]) > 0:
 
             roi_hist = hsv_histogram_for_window(
-                frame, (c, r, w, h))  # this is provided for you
+                frame, (c, r, w, h))  
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
             hist_bp = cv2.calcBackProject([hsv], [0], roi_hist, [0, 180], 1)
 
@@ -187,7 +187,7 @@ def camshift_tracker(v, file_name):
     track_window = (c, r, w, h)
 
     roi_hist = hsv_histogram_for_window(frame, (c, r, w,
-                                                h))  # this is provided for you
+                                                h))  
 
     term_crit = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 1)
     while (1):
